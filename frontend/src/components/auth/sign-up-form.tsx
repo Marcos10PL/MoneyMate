@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, errorMessage } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,21 +16,46 @@ import { useForm } from "react-hook-form";
 import { SignUpForm as SignUpFormType } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpFormSchema } from "@/lib/zod-schemas";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import {
+  useLazyGetXSRFQuery,
+  useRegisterMutation,
+} from "@/lib/state/features/auth/api-auth-slice";
+import Spinner from "../spinner";
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const {
-    register,
+    register: registerForm,
     handleSubmit,
     formState: { errors },
   } = useForm<SignUpFormType>({
     resolver: zodResolver(signUpFormSchema),
   });
 
-  const onSubmit = (data: SignUpFormType) => {
-    console.log(data);
+  const [trigger] = useLazyGetXSRFQuery();
+  const [register, { isLoading }] = useRegisterMutation();
+  const navigate = useRouter();
+
+  const onSubmit = async (data: SignUpFormType) => {
+    await trigger();
+    register(data)
+      .unwrap()
+      .then(() => {
+        toast.success("Sign up successful!");
+        navigate.push("/dashboard");
+      })
+      .catch(error => {
+        console.error("Register failed:", error);
+        toast.error(
+          errorMessage(error.status, {
+            422: "Email already exists. Please try again.",
+          })
+        );
+      });
   };
 
   return (
@@ -39,7 +64,8 @@ export function SignUpForm({
         <CardHeader>
           <CardTitle>Create an account</CardTitle>
           <CardDescription>
-            Enter your data below to create an account
+            By signing up, you agree to use of cookies. If you wish to opt out
+            later, you can delete your account.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -50,32 +76,32 @@ export function SignUpForm({
                 <Input
                   id="email"
                   placeholder="m@example.com"
-                  {...register("email")}
+                  {...registerForm("email")}
                 />
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="name">Name</Label>
-                <Input id="name" {...register("name")} />
+                <Input id="name" {...registerForm("name")} />
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   type="password"
                   id="password"
-                  {...register("password")}
+                  {...registerForm("password")}
                 />
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="confirm-password">Confirm password</Label>
+                <Label htmlFor="password_confirmation">Confirm password</Label>
                 <Input
                   type="password"
-                  id="confirm-password"
-                  {...register("confirmPassword")}
+                  id="password_confirmation"
+                  {...registerForm("password_confirmation")}
                 />
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full">
-                  Sign Up
+                  {isLoading ? <Spinner /> : "Sign Up"}
                 </Button>
               </div>
             </div>
@@ -89,7 +115,7 @@ export function SignUpForm({
               {errors.email?.message ||
                 errors.name?.message ||
                 errors.password?.message ||
-                errors.confirmPassword?.message}
+                errors.password_confirmation?.message}
             </div>
           </form>
         </CardContent>

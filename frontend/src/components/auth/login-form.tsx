@@ -1,6 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, errorMessage } from "@/lib/utils";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,6 +18,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginForm as LoginFormType } from "@/lib/types";
 import { loginFormSchema } from "@/lib/zod-schemas";
 import Error from "./error";
+import {
+  useLazyGetXSRFQuery,
+  useLoginMutation,
+} from "@/lib/state/features/auth/api-auth-slice";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import Spinner from "../spinner";
 
 export function LoginForm({
   className,
@@ -30,8 +38,26 @@ export function LoginForm({
     resolver: zodResolver(loginFormSchema),
   });
 
-  const onSubmit = (data: LoginFormType) => {
-    console.log(data);
+  const [trigger] = useLazyGetXSRFQuery();
+  const [login, { isLoading }] = useLoginMutation();
+  const navigate = useRouter();
+
+  const onSubmit = async (data: LoginFormType) => {
+    await trigger();
+    login(data)
+      .unwrap()
+      .then(() => {
+        toast.success("Login successful!");
+        navigate.push("/dashboard");
+      })
+      .catch(error => {
+        console.error("Login failed:", error);
+        toast.error(
+          errorMessage(error.status, {
+            422: "Invalid credentials. Please try again.",
+          })
+        );
+      });
   };
 
   return (
@@ -66,7 +92,7 @@ export function LoginForm({
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full">
-                  Login
+                  {isLoading ? <Spinner /> : "Login"}
                 </Button>
               </div>
             </div>

@@ -22,6 +22,7 @@ class User extends Authenticatable
     'name',
     'email',
     'password',
+    'role_id',
   ];
 
   /**
@@ -50,5 +51,16 @@ class User extends Authenticatable
   public function role()
   {
     return $this->belongsTo(Role::class);
+  }
+
+  public function assignRole($role)
+  {
+    $this->role()->associate($role);
+    $this->save();
+  }
+
+  public function isAdmin()
+  {
+    return $this->role->name === 'admin';
   }
 }

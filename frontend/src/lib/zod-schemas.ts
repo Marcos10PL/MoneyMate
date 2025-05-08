@@ -35,9 +35,9 @@ export const signUpFormSchema = z
       }),
     name: z.string().min(1, "Name is required"),
     password: passwordSchema,
-    confirmPassword: z.string().min(1, "Confirm password is required"),
+    password_confirmation: z.string().min(1, "Confirm password is required"),
   })
-  .refine(data => data.password === data.confirmPassword, {
+  .refine(data => data.password === data.password_confirmation, {
     message: "Passwords don't match",
-    path: ["confirmPassword"],
+    path: ["password_confirmation"],
   });
