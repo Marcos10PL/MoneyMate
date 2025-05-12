@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\TypeController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -20,5 +24,25 @@ Route::prefix("auth")->group(function () {
   });
 });
 
+Route::middleware('auth:sanctum')->group(function () {
+  Route::apiResource('categories', CategoryController::class)->only([
+    'index',
+  ]);
 
+  Route::apiResource('transactions', TransactionController::class);
 
+  Route::apiResource('types', TypeController::class)->only([
+    'index',
+  ]);
+
+  // only for admin
+  Route::apiResource('categories', CategoryController::class)->only([
+    'store',
+    'destroy'
+  ])->middleware('role');
+
+  Route::apiResource('users', UserController::class)->only([
+    'index',
+    'destroy'
+  ])->middleware('role');
+});

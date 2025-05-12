@@ -53,6 +53,11 @@ class User extends Authenticatable
     return $this->belongsTo(Role::class);
   }
 
+  public function transactions()
+  {
+    return $this->hasMany(Transaction::class);
+  }
+
   public function assignRole($role)
   {
     $this->role()->associate($role);

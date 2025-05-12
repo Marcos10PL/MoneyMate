@@ -17,8 +17,6 @@ return new class extends Migration {
       $table->string('password');
       $table->foreignId('role_id')->references('id')->on('roles');
       $table->timestamps();
-      // $table->timestamp('email_verified_at')->nullable();
-      // $table->rememberToken();
     });
 
     Schema::create('password_reset_tokens', function (Blueprint $table) {
