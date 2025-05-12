@@ -10,15 +10,19 @@ export default function ProtectedLayout({
 }>) {
   return (
     <>
-      <header className="w-full flex items-center sticky top-0 justify-between px-3 md:justify-evenly border-b dark:border-neutral-800 py-2">
-        <Logo />
-        <Nav />
-        <div className="flex items-center gap-2">
-          <ModeToggle />
-          <Logout />
+      <header className="w-full sticky top-0 border-b dark:border-neutral-800 py-2 flex items-center justify-center bg-white dark:bg-black z-50">
+        <div className="w-full md:w-4/5 xl:w-2/3 flex items-center justify-between px-4">
+          <Logo />
+          <Nav />
+          <div className="flex items-center gap-2">
+            <ModeToggle />
+            <Logout />
+          </div>
         </div>
       </header>
-      <main>{children}</main>
+      <main className="py-2 px-4 my-2 mx-auto md:border rounded-md w-full md:w-4/5 xl:w-2/3 mb-18">
+        {children}
+      </main>
     </>
   );
 }

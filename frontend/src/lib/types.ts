@@ -1,8 +1,17 @@
 import { z } from "zod";
-import { loginFormSchema, signUpFormSchema } from "./zod-schemas";
+import {
+  filteringTransactionFormSchema,
+  loginFormSchema,
+  searchTransactionFormSchema,
+  signUpFormSchema,
+} from "./zod-schemas";
 
 export type LoginForm = z.infer<typeof loginFormSchema>;
 export type SignUpForm = z.infer<typeof signUpFormSchema>;
+export type SearchTransactionForm = z.infer<typeof searchTransactionFormSchema>;
+export type FilteringTransactionForm = z.infer<
+  typeof filteringTransactionFormSchema
+>;
 
 export type User = {
   id: number;

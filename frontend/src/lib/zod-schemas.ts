@@ -41,3 +41,24 @@ export const signUpFormSchema = z
     message: "Passwords don't match",
     path: ["password_confirmation"],
   });
+
+export const filteringTransactionFormSchema = z.object({
+  date_from: z.date().optional(),
+  date_to: z.date().optional(),
+  category: z.string().optional(),
+  sort_by: z.enum(["amount_desc", "amount_asc"]).optional(),
+});
+
+export const searchTransactionFormSchema = z.object({
+  search: z.string().optional(),
+});
+
+// export const addTransactionFormSchema = z.object({
+//   name: z
+//     .string()
+//     .min(1, "Name is required")
+//     .max(50, "Name must be less than 50 characters"),
+//   amount: z.number().min(0, "Amount must be a positive number"),
+//   category: z.string().optional(),
+//   type: z.enum(["income", "expense"]),
+// });
