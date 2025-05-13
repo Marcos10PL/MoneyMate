@@ -29,7 +29,7 @@ class TransactionController extends Controller
 
     if ($request->has('sort_by') && in_array($request->input('sort_by'), ['asc', 'desc'])) {
       $transactionsQuery->orderBy('amount', $request->input('sort_by'));
-    } else {
+    } else if ($request->has('sort_by') && $request->input('sort_by') == 'asc') {
       $transactionsQuery->orderBy('amount', 'asc');
     }
 
@@ -37,9 +37,25 @@ class TransactionController extends Controller
       $transactionsQuery->where('name', 'like', '%' . $request->input('search') . '%');
     }
 
+    $income = (float) auth()->user()->transactions()
+      ->whereHas('type', fn($q) => $q
+        ->where('name', 'income'))
+      ->sum('amount');
+
+    $expense = (float) auth()->user()->transactions()
+      ->whereHas('type', fn($q) => $q
+        ->where('name', 'expense'))
+      ->sum('amount');
+
     $transactions = $transactionsQuery->paginate($request->input('per_page', 10));
 
-    return new TransactionCollection($transactions);
+    return new TransactionCollection($transactions)->additional([
+      "data" => [
+        "income_sum" => $income,
+        "expense_sum" => $expense,
+        "balance" => $income - $expense,
+      ],
+    ]);
   }
 
   /**

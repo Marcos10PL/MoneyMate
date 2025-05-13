@@ -15,11 +15,8 @@ class CategoryResource extends JsonResource
   public function toArray(Request $request): array
   {
     return [
-      "message" => "Category retrieved successfully",
-      "category" => [
-        'id' => $this->id,
-        'name' => $this->name,
-      ],
+      'id' => $this->id,
+      'name' => $this->name,
     ];
   }
 }

@@ -15,11 +15,8 @@ class TypeResource extends JsonResource
   public function toArray(Request $request): array
   {
     return [
-      "message" => "Type retrieved successfully",
-      "type" => [
-        'id' => $this->id,
-        'name' => $this->name,
-      ],
+      'id' => $this->id,
+      'name' => $this->name,
     ];
   }
 }

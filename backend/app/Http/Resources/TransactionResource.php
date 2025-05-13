@@ -15,17 +15,13 @@ class TransactionResource extends JsonResource
   public function toArray(Request $request): array
   {
     return [
-      "message" => "Transaction retrieved successfully",
-      "transaction" => [
-        'id' => $this->id,
-        'name' => $this->name,
-        'amount' => $this->amount,
-        'type' => $this->type->name,
-        "user" => $this->user,
-        'category' => $this->category->name,
-        'created_at' => $this->created_at,
-        'updated_at' => $this->updated_at,
-      ],
+      'id' => $this->id,
+      'name' => $this->name,
+      'amount' => $this->amount,
+      'type' => $this->type->name,
+      'category' => $this->category->name,
+      'created_at' => $this->created_at,
+      'updated_at' => $this->updated_at,
     ];
   }
 }
