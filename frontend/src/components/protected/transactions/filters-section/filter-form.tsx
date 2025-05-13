@@ -9,20 +9,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 
 type FilterFormProps = {
+  onSubmit: (data: FilteringTransactionForm) => void;
   setOpen?: (open: boolean) => void;
 };
 
-export default function FilterForm({ setOpen }: FilterFormProps) {
+export default function FilterForm({ setOpen, onSubmit }: FilterFormProps) {
   const form = useForm<FilteringTransactionForm>({
     resolver: zodResolver(filteringTransactionFormSchema),
+    defaultValues: {
+      type_id: "all",
+      category_id: "all",
+      sort_by: "all",
+    },
   });
-
-  const onSubmit = (data: FilteringTransactionForm) => {
-    console.log("Data od:", data.date_from);
-    console.log("Data do:", data.date_to);
-    console.log("Kategoria:", data.category);
-    console.log("Sortowanie:", data.sort_by);
-  };
 
   return (
     <FormProvider {...form}>
@@ -36,7 +35,12 @@ export default function FilterForm({ setOpen }: FilterFormProps) {
           name="date_from"
         />
         <CalendarForm title="Date to" control={form.control} name="date_to" />
-        <SelectForm title="Category" control={form.control} name="category" />
+        <SelectForm title="Type" control={form.control} name="type_id" />
+        <SelectForm
+          title="Category"
+          control={form.control}
+          name="category_id"
+        />
         <SelectForm title="Sort by" control={form.control} name="sort_by" />
         <Button
           onClick={setOpen ? () => setOpen(false) : undefined}

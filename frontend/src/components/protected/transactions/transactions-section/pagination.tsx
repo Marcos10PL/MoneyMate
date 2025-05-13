@@ -1,9 +1,7 @@
 import {
   Pagination as PaginationComponent,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
-  PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
@@ -20,8 +18,6 @@ export default function Pagination({
   setCurrentPage,
   lastPage,
 }: PaginationProps) {
-  const handlePageChange = (page: number) => setCurrentPage(page);
-
   const handleNextPage = () => {
     if (currentPage < lastPage) setCurrentPage(currentPage + 1);
   };
@@ -46,38 +42,10 @@ export default function Pagination({
           </PaginationPrevious>
         </PaginationItem>
 
-        {/* Current Page */}
-        <PaginationItem>
-          <PaginationLink
-            className={cn(
-              "cursor-pointer",
-              currentPage === 1 && "pointer-events-none opacity-50"
-            )}
-            onClick={() => handlePageChange(1)}
-          >
-            1
-          </PaginationLink>
-        </PaginationItem>
-
         {/* Ellipsis if more pages */}
         {lastPage > 1 && (
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-        )}
-
-        {/* Last Page */}
-        {lastPage > 1 && (
-          <PaginationItem>
-            <PaginationLink
-              className={cn(
-                "cursor-pointer",
-                currentPage === lastPage && "pointer-events-none opacity-50"
-              )}
-              onClick={() => handlePageChange(lastPage)}
-            >
-              {lastPage}
-            </PaginationLink>
+          <PaginationItem className="px-2">
+            {currentPage} / {lastPage}
           </PaginationItem>
         )}
 

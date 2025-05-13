@@ -14,16 +14,26 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Control } from "react-hook-form";
-import { FilteringTransactionForm } from "@/lib/types";
+import { Control, FieldValues, Path } from "react-hook-form";
+import { useGetTypesQuery } from "@/lib/state/features/types/api-types-slice";
+import { useGetCategoriesQuery } from "@/lib/state/features/categories/api-categories-slice";
 
-type SelectFormProps = {
+type SelectFormProps<T extends FieldValues> = {
   title: string;
-  control: Control<FilteringTransactionForm>;
-  name: "category" | "sort_by";
+  control: Control<T>;
+  name: Path<T>;
+  noFilter?: true;
 };
 
-export function SelectForm({ control, name, title }: SelectFormProps) {
+export function SelectForm<T extends FieldValues>({
+  control,
+  name,
+  title,
+  noFilter,
+}: SelectFormProps<T>) {
+  const { data: types } = useGetTypesQuery();
+  const { data: categories } = useGetCategoriesQuery();
+
   return (
     <FormField
       control={control}
@@ -31,28 +41,32 @@ export function SelectForm({ control, name, title }: SelectFormProps) {
       render={({ field }) => (
         <FormItem className="w-full">
           <FormLabel>{title}</FormLabel>
-          <Select onValueChange={field.onChange}>
+          <Select onValueChange={field.onChange} defaultValue={field.value}>
             <FormControl className="w-full min-w-32">
               <SelectTrigger>
-                <SelectValue
-                  placeholder={`Select a ${title.toLocaleLowerCase()}`}
-                />
+                <SelectValue placeholder="Select a value" />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {name === "sort_by" ? (
+              {!noFilter && <SelectItem value={"all"}>All</SelectItem>}
+              {name === "sort_by" && (
                 <>
-                  <SelectItem value="amount_desc">Descending</SelectItem>
-                  <SelectItem value="amount_asc">Ascending</SelectItem>
-                </>
-              ) : (
-                <>
-                  <SelectItem value="food">Food</SelectItem>
-                  <SelectItem value="transport">Transport</SelectItem>
-                  <SelectItem value="entertainment">Entertainment</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="desc">Descending</SelectItem>
+                  <SelectItem value="asc">Ascending</SelectItem>
                 </>
               )}
+              {name === "category_id" &&
+                categories?.map(category => (
+                  <SelectItem key={category.id} value={category.id.toString()}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              {name === "type_id" &&
+                types?.map(type => (
+                  <SelectItem key={type.id} value={type.id.toString()}>
+                    {type.name.charAt(0).toUpperCase() + type.name.slice(1)}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
           <FormMessage />

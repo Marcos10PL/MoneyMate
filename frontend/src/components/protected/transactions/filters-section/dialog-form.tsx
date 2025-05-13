@@ -11,8 +11,13 @@ import {
 import { ListFilterIcon } from "lucide-react";
 import FilterForm from "./filter-form";
 import { useState } from "react";
+import { FilteringTransactionForm } from "@/lib/types";
 
-export default function DialogForm() {
+type DialogFormProps = {
+  onSubmit: (data: FilteringTransactionForm) => void;
+};
+
+export default function DialogForm({ onSubmit }: DialogFormProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -28,7 +33,7 @@ export default function DialogForm() {
         <DialogDescription>
           Use this form to filter your transactions
         </DialogDescription>
-        <FilterForm setOpen={setOpen} />
+        <FilterForm setOpen={setOpen} onSubmit={onSubmit} />
       </DialogContent>
     </Dialog>
   );

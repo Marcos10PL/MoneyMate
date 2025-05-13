@@ -11,7 +11,7 @@ export default function ProtectedLayout({
   return (
     <>
       <header className="w-full sticky top-0 border-b dark:border-neutral-800 py-2 flex items-center justify-center bg-white dark:bg-black z-50">
-        <div className="w-full md:w-4/5 xl:w-2/3 flex items-center justify-between px-4">
+        <div className="w-full md:w-11/12 xl:w-3/4 flex items-center justify-between px-4">
           <Logo />
           <Nav />
           <div className="flex items-center gap-2">
@@ -20,7 +20,7 @@ export default function ProtectedLayout({
           </div>
         </div>
       </header>
-      <main className="py-2 px-4 my-2 mx-auto md:border rounded-md w-full md:w-4/5 xl:w-2/3 mb-18">
+      <main className="py-2 px-4 my-2 mx-auto md:border rounded-md w-full md:w-11/12 xl:w-3/4 mb-18 md:mb-2">
         {children}
       </main>
     </>

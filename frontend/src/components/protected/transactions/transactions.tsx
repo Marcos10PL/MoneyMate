@@ -1,21 +1,31 @@
 "use client";
 
-import { useGetTransactionsQuery } from "@/lib/state/features/transactions/api-transactions-slice";
-import { useState } from "react";
-import TrasncactionsHeader from "./transactions-header";
+import TrasncactionsHeader from "./transactions-section/transactions-header";
 import TransactionsList from "./transactions-section/transactions-list";
+import Forms from "./filters-section/forms";
+import { useTransactions } from "@/lib/my-hooks/transactions/useTransactions";
 
 export default function Transactions() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const perPage = 10;
-
-  const { data, isLoading, isError, isFetching } = useGetTransactionsQuery({
-    page: currentPage,
-    per_page: perPage,
-  });
+  const {
+    onSubmitFilter,
+    onSubmitSearch,
+    onResetSearch,
+    currentPage,
+    setCurrentPage,
+    data,
+    isLoading,
+    isError,
+    isPageChanging,
+  } = useTransactions();
 
   return (
     <>
+      <Forms
+        onSubmitFilter={onSubmitFilter}
+        onSubmitSearch={onSubmitSearch}
+        onResetSearch={onResetSearch}
+      />
+
       <TrasncactionsHeader
         incomeSum={data?.data.income_sum ?? 0}
         expenseSum={data?.data.expense_sum ?? 0}
@@ -24,7 +34,7 @@ export default function Transactions() {
 
       <TransactionsList
         transactions={data?.data.transactions ?? []}
-        isLoading={isLoading || isFetching}
+        isLoading={isLoading || isPageChanging}
         isError={isError}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}

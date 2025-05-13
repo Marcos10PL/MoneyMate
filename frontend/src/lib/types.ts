@@ -4,6 +4,7 @@ import {
   loginFormSchema,
   searchTransactionFormSchema,
   signUpFormSchema,
+  TransactionFormSchema,
 } from "./zod-schemas";
 
 export type LoginForm = z.infer<typeof loginFormSchema>;
@@ -12,7 +13,9 @@ export type SearchTransactionForm = z.infer<typeof searchTransactionFormSchema>;
 export type FilteringTransactionForm = z.infer<
   typeof filteringTransactionFormSchema
 >;
+export type TransactionForm = z.infer<typeof TransactionFormSchema>;
 
+// auth
 export type User = {
   id: number;
   name: string;
@@ -21,18 +24,18 @@ export type User = {
   created_at: string;
   updated_at: string;
 };
-
 export type AuthResponse = {
   message: string;
   user: User;
 };
 
+// transactions
 export type Transaction = {
   id: number;
   name: string;
   amount: number;
   category: string;
-  type: string;
+  type: Type["name"];
   created_at: string;
   updated_at: string;
 };
@@ -61,4 +64,32 @@ export type TransactionParams = {
   end_date?: string;
   sort_by?: string;
   search?: string;
+  type_id?: string;
+};
+
+// types
+export type Type = {
+  id: number;
+  name: "income" | "expense";
+};
+
+export type TypeResponse = {
+  data: {
+    message: string;
+    types: Type[];
+  };
+};
+
+// categories
+export type Category = {
+  id: number;
+  name: string;
+  type: Type;
+};
+
+export type CategoryResponse = {
+  data: {
+    message: string;
+    categories: Category[];
+  };
 };

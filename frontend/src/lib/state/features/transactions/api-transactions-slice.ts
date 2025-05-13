@@ -5,11 +5,12 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 export const transactionsApi = createApi({
   reducerPath: "transactionsApi",
   baseQuery: baseQuery,
-  tagTypes: ["Transactions"],
+  tagTypes: ["Transactions", "TransactionSummary"],
   endpoints: builder => ({
     getTransactions: builder.query<TransactionResponse, TransactionParams>({
       query: ({
         category_id,
+        type_id,
         start_date,
         end_date,
         sort_by,
@@ -22,12 +23,13 @@ export const transactionsApi = createApi({
         const params = new URLSearchParams();
 
         if (category_id) params.append("category_id", category_id.toString());
+        if (type_id) params.append("type_id", type_id.toString());
         if (start_date) params.append("start_date", start_date);
         if (end_date) params.append("end_date", end_date);
         if (sort_by) params.append("sort_by", sort_by);
         if (search) params.append("search", search);
-        if (page) params.append("page", page.toString()); 
-        if (per_page) params.append("per_page", per_page.toString()); 
+        if (page) params.append("page", page.toString());
+        if (per_page) params.append("per_page", per_page.toString());
 
         if (params.toString()) {
           url += `?${params.toString()}`;
@@ -35,17 +37,17 @@ export const transactionsApi = createApi({
 
         return url;
       },
+      providesTags: result =>
+        result
+          ? [
+              ...result.data.transactions.map(({ id }) => ({
+                type: "Transactions" as const,
+                id,
+              })),
+              "Transactions",
+            ]
+          : ["Transactions"],
     }),
-    // getTransactionById: builder.query({
-    //   query: (id: string) => `transactions/${id}`,
-    // }),
-    // createTransaction: builder.mutation({
-    //   query: transaction => ({
-    //     url: "transactions",
-    //     method: "POST",
-    //     body: transaction,
-    //   }),
-    // }),
     // updateTransaction: builder.mutation({
     //   query: ({ id, ...transaction }) => ({
     //     url: `transactions/${id}`,
@@ -53,12 +55,13 @@ export const transactionsApi = createApi({
     //     body: transaction,
     //   }),
     // }),
-    // deleteTransaction: builder.mutation({
-    //   query: id => ({
-    //     url: `transactions/${id}`,
-    //     method: "DELETE",
-    //   }),
-    // }),
+    deleteTransaction: builder.mutation({
+      query: id => ({
+        url: `transactions/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, id) => [{ type: "Transactions", id }],
+    }),
   }),
 });
 
@@ -66,5 +69,5 @@ export const {
   useGetTransactionsQuery,
   // useCreateTransactionMutation,
   // useUpdateTransactionMutation,
-  // useGetTransactionByIdQuery,
+  useDeleteTransactionMutation,
 } = transactionsApi;

@@ -22,17 +22,25 @@ export default function TransactionsList({
 }: TransactionCardProps) {
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-40">
+      <Layout>
         <Spinner />
-      </div>
+      </Layout>
     );
   }
 
   if (isError) {
     return (
-      <div className="flex items-center justify-center">
+      <Layout>
         <p className="text-red-400">Error loading transactions</p>
-      </div>
+      </Layout>
+    );
+  }
+
+  if (transactions.length === 0) {
+    return (
+      <Layout>
+        <p className="text-muted-foreground">No transactions found</p>
+      </Layout>
     );
   }
 
@@ -44,11 +52,19 @@ export default function TransactionsList({
         );
       })}
 
-      <Pagination
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        lastPage={lastPage}
-      />
+      {lastPage !== 1 && (
+        <Pagination
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          lastPage={lastPage}
+        />
+      )}
     </section>
+  );
+}
+
+function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-center h-32">{children}</div>
   );
 }

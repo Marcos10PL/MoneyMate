@@ -37,6 +37,10 @@ class TransactionController extends Controller
       $transactionsQuery->where('name', 'like', '%' . $request->input('search') . '%');
     }
 
+    if ($request->has('type_id')) {
+      $transactionsQuery->where('type_id', $request->input('type_id'));
+    }
+
     $income = (float) auth()->user()->transactions()
       ->whereHas('type', fn($q) => $q
         ->where('name', 'income'))
@@ -51,9 +55,9 @@ class TransactionController extends Controller
 
     return new TransactionCollection($transactions)->additional([
       "data" => [
-        "income_sum" => $income,
-        "expense_sum" => $expense,
-        "balance" => $income - $expense,
+        "income_sum" => round($income, 2),
+        "expense_sum" => round($expense, 2),
+        "balance" => round($income - $expense, 2),
       ],
     ]);
   }
@@ -133,10 +137,16 @@ class TransactionController extends Controller
   {
     $transaction = Transaction::where('id', $id)
       ->where('user_id', auth()->id())
-      ->deleteOrFail();
+      ->first();
 
-    return response()->json([
-      'message' => 'Transaction deleted successfully',
-    ]);
+    if (!$transaction) {
+      return response()->json([
+        'message' => 'Transaction not found',
+      ], 404);
+    }
+
+    $transaction->delete();
+
+    return response()->noContent(204);
   }
 }
