@@ -14,10 +14,11 @@ return new class extends Migration {
       $table->id();
       $table->string('name');
       $table->decimal('amount', 10, 2);
+      $table->date('date')->default(now());
       $table->foreignId('user_id')->references('id')->on('users');
       $table->foreignId('type_id')->references('id')->on('types');
       $table->foreignId('category_id')->references('id')->on('categories');
-      $table->timestamps();
+      // $table->timestamps();
     });
   }
 

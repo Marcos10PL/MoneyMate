@@ -1,9 +1,9 @@
 "use client";
 
-import TrasncactionsHeader from "./transactions-section/transactions-header";
-import TransactionsList from "./transactions-section/transactions-list";
-import Forms from "./filters-section/forms";
-import { useTransactions } from "@/lib/my-hooks/transactions/useTransactions";
+import TrasncactionsHeader from "./sections/transactions-header";
+import Forms from "./sections/forms";
+import { useTransactions } from "@/lib/hooks/transactions/useTransactions";
+import TransactionsList from "./sections/transactions-list";
 
 export default function Transactions() {
   const {
@@ -16,7 +16,7 @@ export default function Transactions() {
     isLoading,
     isError,
     isPageChanging,
-  } = useTransactions();
+  } = useTransactions({ per_page: 8 });
 
   return (
     <>
@@ -30,6 +30,7 @@ export default function Transactions() {
         incomeSum={data?.data.income_sum ?? 0}
         expenseSum={data?.data.expense_sum ?? 0}
         balance={data?.data.balance ?? 0}
+        total={data?.meta.total ?? 0}
       />
 
       <TransactionsList

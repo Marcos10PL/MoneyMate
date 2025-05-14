@@ -1,7 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import baseQuery from "../../base-query";
 import { AuthResponse, LoginForm, SignUpForm, User } from "@/lib/types";
-import { logout, setUser } from "./auth-slice";
 import { setLoggedInCookie } from "@/lib/utils";
 
 export const authApi = createApi({
@@ -15,10 +14,10 @@ export const authApi = createApi({
         body: userData,
       }),
       transformResponse: (response: AuthResponse) => response.user,
-      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_, { queryFulfilled }) {
         const { data: user } = await queryFulfilled;
         setLoggedInCookie(true);
-        dispatch(setUser(user));
+        localStorage.setItem("user", JSON.stringify(user));
       },
     }),
     register: builder.mutation<User, SignUpForm>({
@@ -28,10 +27,10 @@ export const authApi = createApi({
         body: userData,
       }),
       transformResponse: (response: AuthResponse) => response.user,
-      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_, { queryFulfilled }) {
         const { data: user } = await queryFulfilled;
         setLoggedInCookie(true);
-        dispatch(setUser(user));
+        localStorage.setItem("user", JSON.stringify(user));
       },
     }),
     logout: builder.mutation({
@@ -39,10 +38,10 @@ export const authApi = createApi({
         url: "auth/logout",
         method: "POST",
       }),
-      async onQueryStarted(_, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_, { queryFulfilled }) {
         await queryFulfilled;
         setLoggedInCookie(false);
-        dispatch(logout());
+        localStorage.removeItem("user");
       },
     }),
     getXSRF: builder.query<void, void>({

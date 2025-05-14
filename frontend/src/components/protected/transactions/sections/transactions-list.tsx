@@ -1,7 +1,7 @@
 import { Transaction } from "@/lib/types";
-import TransactionCard from "./transaction-card";
 import Spinner from "@/components/spinner";
-import Pagination from "./pagination";
+import TransactionCard from "../elements/transaction-card";
+import Pagination from "../elements/pagination";
 
 type TransactionCardProps = {
   transactions: Transaction[];
@@ -20,39 +20,27 @@ export default function TransactionsList({
   setCurrentPage,
   lastPage,
 }: TransactionCardProps) {
-  if (isLoading) {
-    return (
-      <Layout>
-        <Spinner />
-      </Layout>
-    );
-  }
-
-  if (isError) {
-    return (
-      <Layout>
-        <p className="text-red-400">Error loading transactions</p>
-      </Layout>
-    );
-  }
-
-  if (transactions.length === 0) {
-    return (
-      <Layout>
-        <p className="text-muted-foreground">No transactions found</p>
-      </Layout>
-    );
-  }
-
   return (
     <section className="pt-4 space-y-2">
-      {transactions.map(transaction => {
-        return (
+      {isError ? (
+        <Layout>
+          <p className="text-red-400">Error loading transactions</p>
+        </Layout>
+      ) : isLoading ? (
+        <Layout>
+          <Spinner />
+        </Layout>
+      ) : transactions.length === 0 ? (
+        <Layout>
+          <p className="text-muted-foreground">No transactions found</p>
+        </Layout>
+      ) : (
+        transactions.map(transaction => (
           <TransactionCard key={transaction.id} transaction={transaction} />
-        );
-      })}
+        ))
+      )}
 
-      {lastPage !== 1 && (
+      {lastPage > 1 && (
         <Pagination
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}

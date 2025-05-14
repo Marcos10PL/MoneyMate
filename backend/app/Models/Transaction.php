@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
+  public $timestamps = false;
   protected $fillable = [
     'name',
     'amount',
     'category_id',
     'type_id',
     'user_id',
+    'date',
   ];
 
   public function category()

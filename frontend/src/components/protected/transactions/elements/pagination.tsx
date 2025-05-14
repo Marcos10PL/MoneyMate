@@ -29,7 +29,6 @@ export default function Pagination({
   return (
     <PaginationComponent className="py-2">
       <PaginationContent>
-        {/* Previous Page */}
         <PaginationItem>
           <PaginationPrevious
             onClick={handlePreviousPage}
@@ -42,14 +41,12 @@ export default function Pagination({
           </PaginationPrevious>
         </PaginationItem>
 
-        {/* Ellipsis if more pages */}
         {lastPage > 1 && (
           <PaginationItem className="px-2">
             {currentPage} / {lastPage}
           </PaginationItem>
         )}
 
-        {/* Next Page */}
         <PaginationItem>
           <PaginationNext
             href="#"

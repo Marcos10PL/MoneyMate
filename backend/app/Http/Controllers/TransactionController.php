@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Resources\TransactionCollection;
 use App\Http\Resources\TransactionResource;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TransactionController extends Controller
 {
@@ -21,10 +23,18 @@ class TransactionController extends Controller
     }
 
     if ($request->has('start_date') && $request->has('end_date')) {
-      $transactionsQuery->whereBetween('created_at', [
-        $request->input('start_date'),
-        $request->input('end_date')
-      ]);
+      $startDate = Carbon::parse($request->input('start_date'))->timezone('Europe/Warsaw')->startOfDay();
+      $endDate = Carbon::parse($request->input('end_date'))->timezone('Europe/Warsaw')->endOfDay();
+
+      $transactionsQuery->whereBetween('date', [$startDate, $endDate]);
+    } elseif ($request->has('start_date')) {
+      $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
+
+      $transactionsQuery->where('date', '>=', $startDate);
+    } elseif ($request->has('end_date')) {
+      $endDate = Carbon::parse($request->input('end_date'))->timezone('Europe/Warsaw')->endOfDay();
+
+      $transactionsQuery->where('date', '<=', $endDate);
     }
 
     if ($request->has('sort_by') && in_array($request->input('sort_by'), ['asc', 'desc'])) {
@@ -68,10 +78,11 @@ class TransactionController extends Controller
   public function store(Request $request)
   {
     $request->validate([
-      'name' => 'required|string|max:40',
+      'name' => ['required', 'string', 'max:40', 'regex:/^[\pL0-9.,\- ]+$/u'],
       'amount' => 'required|numeric',
       'type_id' => 'required|exists:types,id',
       'category_id' => 'required|exists:categories,id',
+      'date' => 'nullable|date',
     ]);
 
     $transaction = Transaction::create([
@@ -80,11 +91,16 @@ class TransactionController extends Controller
       'type_id' => $request->input('type_id'),
       'category_id' => $request->input('category_id'),
       'user_id' => auth()->id(),
+      'date' => $request->input('date')
+        ? Carbon::parse($request
+          ->input('date'))
+          ->timezone('Europe/Warsaw')
+        : Carbon::now('Europe/Warsaw'),
     ]);
 
     return response()->json([
       'message' => 'Transaction created successfully',
-      'transaction' => $transaction,
+      'transaction' => new TransactionResource($transaction),
     ], 201);
   }
 
@@ -106,10 +122,11 @@ class TransactionController extends Controller
   public function update(Request $request, string $id)
   {
     $request->validate([
-      'name' => 'required|string|max:40',
+      'name' => ['required', 'string', 'max:40', 'regex:/^[\pL0-9.,\- ]+$/u'],
       'amount' => 'required|numeric',
       'type_id' => 'required|exists:types,id',
       'category_id' => 'required|exists:categories,id',
+      'date' => 'nullable|date',
     ]);
 
     $transaction = Transaction::where('id', $id)
@@ -121,11 +138,16 @@ class TransactionController extends Controller
       'amount' => $request->input('amount'),
       'type_id' => $request->input('type_id'),
       'category_id' => $request->input('category_id'),
+      'date' => $request->input('date')
+        ? Carbon::parse($request
+          ->input('date'))
+          ->timezone('Europe/Warsaw')
+        : Carbon::now('Europe/Warsaw'),
     ]);
 
     return response()->json([
       'message' => 'Transaction updated successfully',
-      'transaction' => $transaction,
+      'transaction' => new TransactionResource($transaction),
     ], 200);
 
   }
@@ -147,6 +169,8 @@ class TransactionController extends Controller
 
     $transaction->delete();
 
-    return response()->noContent(204);
+    return response()->json([
+      'message' => 'Transaction deleted successfully',
+    ], 200);
   }
 }

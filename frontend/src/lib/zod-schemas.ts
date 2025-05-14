@@ -58,10 +58,15 @@ export const TransactionFormSchema = z.object({
   name: z
     .string()
     .min(1, "Name is required")
-    .max(50, "Name must be less than 50 characters"),
-  amount: z.string().refine(val => /^\d+(\.\d{1,2})?$/.test(val), {
-    message: "Amount must be a valid number",
-  }),
+    .max(40, "Name must be less than 40 characters")
+    .regex(/^[a-zA-Z0-9.,\- ]*$/, "Invalid characters in name"),
+  amount: z
+    .string()
+    .refine(val => /^\d+([.,]\d{1,2})?$/.test(val), {
+      message: "Amount must be a valid number",
+    })
+    .transform(val => val.replace(",", ".")),
+  date: z.date().optional(),
   category_id: z.string(),
   type_id: z.string(),
 });

@@ -2,7 +2,7 @@
 
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { Control } from "react-hook-form";
+import { Control, FieldValues, Path } from "react-hook-form";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -19,15 +19,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { FilteringTransactionForm } from "@/lib/types";
 
-type CalendarFormProps = {
+type CalendarFormProps<T extends FieldValues> = {
   title: string;
-  control: Control<FilteringTransactionForm>;
-  name: "date_from" | "date_to";
+  control: Control<T>;
+  name: Path<T>;
 };
 
-export function CalendarForm({ title, control, name }: CalendarFormProps) {
+export function CalendarForm<T extends FieldValues>({ title, control, name }: CalendarFormProps<T>) {
   return (
     <FormField
       control={control}

@@ -8,32 +8,49 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { TransactionForm as TransactionFormType } from "@/lib/types";
-import { TransactionFormSchema } from "@/lib/zod-schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusIcon } from "lucide-react";
-import { FormProvider, useForm } from "react-hook-form";
-import { SelectForm } from "./select";
+import { FormProvider, UseFormReturn } from "react-hook-form";
+import { SelectForm } from "../elements/select";
 import { cn } from "@/lib/utils";
+import Spinner from "@/components/spinner";
+import { LucideIcon } from "lucide-react";
+import { CalendarForm } from "../elements/calendar-form";
 
-export default function TransactionForm() {
-  const form = useForm<TransactionFormType>({
-    resolver: zodResolver(TransactionFormSchema),
-  });
+type TransactionFormProps = {
+  title: string;
+  buttonText: string;
+  openButtonText: string;
+  icon: LucideIcon;
+  onSubmit: (data: TransactionFormType) => void;
+  form: UseFormReturn<TransactionFormType>;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isLoading: boolean;
+};
 
-  const onSubmit = async (data: TransactionFormType) => {
-    console.log(data);
-  };
-
+export default function TransactionForm({
+  title,
+  buttonText,
+  openButtonText,
+  icon: Icon,
+  form,
+  open,
+  setOpen,
+  onSubmit,
+  isLoading,
+}: TransactionFormProps) {
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
-          <p>Add new </p>
-          <PlusIcon />
+        <Button
+          variant={openButtonText === "" ? "ghost" : "default"}
+          className={cn(openButtonText === "" && "text-blue-300")}
+        >
+          {openButtonText !== "" && <p>{openButtonText} </p>}
+          <Icon />
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogTitle>Add Transaction</DialogTitle>
+        <DialogTitle>{title}</DialogTitle>
         <DialogDescription>
           Fill in the details of the transaction.
         </DialogDescription>
@@ -44,12 +61,12 @@ export default function TransactionForm() {
               placeholder="Transaction Name"
               className={cn(
                 "my-2",
-                form.formState.errors.amount && "border-red-400"
+                form.formState.errors.name && "border-red-400"
               )}
             />
             {form.formState.errors.name && (
               <p className="text-red-400 text-sm mt-0">
-                {form.formState.errors.name.message}
+                {form.formState.errors.name?.message}
               </p>
             )}
 
@@ -68,13 +85,17 @@ export default function TransactionForm() {
             )}
 
             <div className="py-2 space-y-4">
+              <CalendarForm
+                control={form.control}
+                name="date"
+                title="Date"
+              />
               <SelectForm
                 control={form.control}
                 name="category_id"
                 title="Category"
                 noFilter
               />
-
               <SelectForm
                 control={form.control}
                 name="type_id"
@@ -83,7 +104,13 @@ export default function TransactionForm() {
               />
             </div>
 
-            <Button type="submit">Submit</Button>
+            <Button
+              type="submit"
+              className="w-full md:w-fit min-w-36"
+              disabled={isLoading || !open}
+            >
+              {isLoading ? <Spinner /> : buttonText}
+            </Button>
           </form>
         </FormProvider>
       </DialogContent>

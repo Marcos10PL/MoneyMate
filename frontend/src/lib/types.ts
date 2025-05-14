@@ -36,8 +36,7 @@ export type Transaction = {
   amount: number;
   category: string;
   type: Type["name"];
-  created_at: string;
-  updated_at: string;
+  date: string;
 };
 
 export type TransactionResponse = {

@@ -1,11 +1,16 @@
-import { TransactionParams, TransactionResponse } from "@/lib/types";
+import {
+  Transaction,
+  TransactionForm,
+  TransactionParams,
+  TransactionResponse,
+} from "@/lib/types";
 import baseQuery from "../../base-query";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
 export const transactionsApi = createApi({
   reducerPath: "transactionsApi",
   baseQuery: baseQuery,
-  tagTypes: ["Transactions", "TransactionSummary"],
+  tagTypes: ["Transactions"],
   endpoints: builder => ({
     getTransactions: builder.query<TransactionResponse, TransactionParams>({
       query: ({
@@ -48,26 +53,44 @@ export const transactionsApi = createApi({
             ]
           : ["Transactions"],
     }),
-    // updateTransaction: builder.mutation({
-    //   query: ({ id, ...transaction }) => ({
-    //     url: `transactions/${id}`,
-    //     method: "PUT",
-    //     body: transaction,
-    //   }),
-    // }),
+    createTransaction: builder.mutation<Transaction, TransactionForm>({
+      query: transaction => ({
+        url: "transactions",
+        method: "POST",
+        body: transaction,
+      }),
+      invalidatesTags: result =>
+        result
+          ? [{ type: "Transactions", id: result.id }, "Transactions"]
+          : ["Transactions"],
+    }),
+    updateTransaction: builder.mutation<
+      Transaction,
+      TransactionForm & { id: string }
+    >({
+      query: ({ id, ...transaction }) => ({
+        url: `transactions/${id}`,
+        method: "PUT",
+        body: transaction,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Transactions", id },
+        "Transactions",
+      ],
+    }),
     deleteTransaction: builder.mutation({
       query: id => ({
         url: `transactions/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: (result, error, id) => [{ type: "Transactions", id }],
+      invalidatesTags: ["Transactions"],
     }),
   }),
 });
 
 export const {
   useGetTransactionsQuery,
-  // useCreateTransactionMutation,
-  // useUpdateTransactionMutation,
+  useCreateTransactionMutation,
+  useUpdateTransactionMutation,
   useDeleteTransactionMutation,
 } = transactionsApi;
