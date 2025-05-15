@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import Logo from "@/components/logo";
 import { ModeToggle } from "@/components/mode-toggle";
 import Logout from "@/components/protected/shared/navbar/logout";
@@ -20,9 +21,10 @@ export default function ProtectedLayout({
           </div>
         </div>
       </header>
-      <main className="py-2 px-4 my-2 mx-auto md:border rounded-md w-full md:w-11/12 xl:w-3/4 mb-22 md:mb-2">
+      <main className="py-2 px-4 my-2 mx-auto md:border rounded-md w-full md:w-11/12 xl:w-3/4">
         {children}
       </main>
+      <Footer />
     </>
   );
 }

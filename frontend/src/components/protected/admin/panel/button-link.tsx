@@ -10,7 +10,7 @@ export default function ButtonLink({ title, href }: ButtonLinkProps) {
   return (
     <Button asChild className="w-full py-10" variant={"outline"}>
       <Link href={href}>
-        <h1 className="text-2xl font-bold">{title}</h1>
+        <h1 className="text-xl font-bold">{title}</h1>
       </Link>
     </Button>
   );

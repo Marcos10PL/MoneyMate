@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import Logo from "@/components/logo";
 import { ModeToggle } from "@/components/mode-toggle";
 
@@ -13,7 +14,8 @@ export default function AuthLayout({
           <Logo />
           <ModeToggle />
         </header>
-        <div className="w-full max-w-sm mb-20">{children}</div>
+        <div className="w-full max-w-sm">{children}</div>
+        <Footer className="mb-20 md:mb-20"/>
       </main>
     </>
   );

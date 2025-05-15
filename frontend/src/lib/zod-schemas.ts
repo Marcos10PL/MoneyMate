@@ -59,11 +59,12 @@ export const transactionFormSchema = z.object({
     .string()
     .min(1, "Name is required")
     .max(40, "Name must be less than 40 characters")
-    .regex(/^[a-zA-Z0-9.,\- ]*$/, "Invalid characters in name"),
+    .regex(/^[a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ.,\- ]*$/, "Invalid characters in name"),
   amount: z
     .string()
-    .refine(val => /^\d+([.,]\d{1,2})?$/.test(val), {
-      message: "Amount must be a valid number",
+    .max(11, "Amount is too big")
+    .refine(val => /^\d{1,8}([.,]\d{1,2})?$/.test(val), {
+      message: "Too big or invalid characters",
     })
     .transform(val => val.replace(",", ".")),
   date: z.date().optional(),
@@ -76,5 +77,5 @@ export const categoryFormSchema = z.object({
     .string()
     .min(1, "Name is required")
     .max(40, "Name must be less than 40 characters")
-    .regex(/^[a-zA-Z0-9.,\- ]*$/, "Invalid characters in name"),
+    .regex(/^[a-zA-Z0-9ąćęłńóśźżĄĆĘŁŃÓŚŹŻ.,\- ]*$/, "Invalid characters in name"),
 });
