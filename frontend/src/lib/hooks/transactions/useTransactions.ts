@@ -4,11 +4,12 @@ import {
   SearchTransactionForm,
   TransactionParams,
 } from "@/lib/types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import usePagination from "../usePagination";
 
 export const useTransactions = ({
   page,
-  per_page,
+  per_page = 10,
   category_id,
   start_date,
   end_date,
@@ -17,7 +18,6 @@ export const useTransactions = ({
   type_id,
 }: Partial<TransactionParams>) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [isPageChanging, setIsPageChanging] = useState(false);
   const [filters, setFilters] = useState<
     Omit<TransactionParams, "per_page" | "page">
   >({
@@ -29,17 +29,24 @@ export const useTransactions = ({
     type_id: undefined,
   });
 
-  const { data, isLoading, isError, isFetching, refetch } =
-    useGetTransactionsQuery({
-      page: page || currentPage,
-      per_page: per_page ?? 10,
-      type_id: type_id ?? filters.type_id,
-      category_id: category_id ?? filters.category_id,
-      start_date: start_date ?? filters.start_date,
-      end_date: end_date ?? filters.end_date,
-      sort_by: sort_by ?? filters.sort_by,
-      search: search ?? filters.search,
-    });
+  const { data, isLoading, isError, isFetching } = useGetTransactionsQuery({
+    page: page || currentPage,
+    per_page: per_page,
+    type_id: type_id ?? filters.type_id,
+    category_id: category_id ?? filters.category_id,
+    start_date: start_date ?? filters.start_date,
+    end_date: end_date ?? filters.end_date,
+    sort_by: sort_by ?? filters.sort_by,
+    search: search ?? filters.search,
+  });
+
+  const { isPageChanging } = usePagination({
+    isFetching,
+    isLoading,
+    dataLength: data?.data.transactions.length ?? 0,
+    currentPage,
+    setCurrentPage,
+  });
 
   const onSubmitFilter = (data: FilteringTransactionForm) => {
     if (data.category_id === "all") {
@@ -64,22 +71,6 @@ export const useTransactions = ({
     });
     setCurrentPage(1);
   };
-
-  useEffect(() => {
-    if (isFetching) setIsPageChanging(true);
-  }, [currentPage, isFetching]);
-
-  useEffect(() => {
-    if (!isFetching && isPageChanging) {
-      setIsPageChanging(false);
-    }
-  }, [isFetching, isPageChanging]);
-
-  useEffect(() => {
-    if (!isLoading && data?.data.transactions.length === 0 && currentPage > 1) {
-      setCurrentPage(prev => prev - 1);
-    }
-  }, [data, isLoading, currentPage, refetch]);
 
   const onSubmitSearch = (data: SearchTransactionForm) => {
     setFilters({
@@ -106,5 +97,5 @@ export const useTransactions = ({
     isLoading,
     isError,
     isPageChanging,
-  };
+  } as const;
 };

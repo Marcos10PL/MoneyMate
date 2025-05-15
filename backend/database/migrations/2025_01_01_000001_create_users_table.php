@@ -33,8 +33,25 @@ return new class extends Migration {
       $table->longText('payload');
       $table->integer('last_activity')->index();
     });
-  }
 
+    DB::table('users')->insert([
+      'name' => 'admin',
+      'email' => 'admin@admin.pl',
+      'password' => Hash::make('Admin123.'),
+      'role_id' => 1,
+      "created_at" => now(),
+      "updated_at" => now(),
+    ]);
+
+    DB::table('users')->insert([
+      'name' => 'user',
+      'email' => 'user@user.pl',
+      'password' => Hash::make('User123.'),
+      'role_id' => 2,
+      "created_at" => now(),
+      "updated_at" => now(),
+    ]);
+  }  
   /**
    * Reverse the migrations.
    */

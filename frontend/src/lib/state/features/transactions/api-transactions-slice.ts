@@ -24,7 +24,6 @@ export const transactionsApi = createApi({
         per_page = 10,
       }) => {
         let url = "transactions";
-
         const params = new URLSearchParams();
 
         if (category_id) params.append("category_id", category_id.toString());
@@ -36,10 +35,7 @@ export const transactionsApi = createApi({
         if (page) params.append("page", page.toString());
         if (per_page) params.append("per_page", per_page.toString());
 
-        if (params.toString()) {
-          url += `?${params.toString()}`;
-        }
-
+        if (params.toString()) url += `?${params.toString()}`;
         return url;
       },
       providesTags: result =>
@@ -78,7 +74,7 @@ export const transactionsApi = createApi({
         "Transactions",
       ],
     }),
-    deleteTransaction: builder.mutation({
+    deleteTransaction: builder.mutation<void, string>({
       query: id => ({
         url: `transactions/${id}`,
         method: "DELETE",

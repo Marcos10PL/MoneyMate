@@ -1,10 +1,11 @@
 import { z } from "zod";
 import {
+  categoryFormSchema,
   filteringTransactionFormSchema,
   loginFormSchema,
   searchTransactionFormSchema,
   signUpFormSchema,
-  TransactionFormSchema,
+  transactionFormSchema,
 } from "./zod-schemas";
 
 export type LoginForm = z.infer<typeof loginFormSchema>;
@@ -13,7 +14,15 @@ export type SearchTransactionForm = z.infer<typeof searchTransactionFormSchema>;
 export type FilteringTransactionForm = z.infer<
   typeof filteringTransactionFormSchema
 >;
-export type TransactionForm = z.infer<typeof TransactionFormSchema>;
+export type TransactionForm = z.infer<typeof transactionFormSchema>;
+export type CategoryForm = z.infer<typeof categoryFormSchema>;
+
+type Meta = {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+};
 
 // auth
 export type User = {
@@ -47,12 +56,7 @@ export type TransactionResponse = {
     expense_sum: number;
     balance: number;
   };
-  meta: {
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-  };
+  meta: Meta;
 };
 
 export type TransactionParams = {
@@ -91,4 +95,24 @@ export type CategoryResponse = {
     message: string;
     categories: Category[];
   };
+  meta: Meta;
+};
+
+export type CategoryParams = {
+  per_page: number;
+  page: number;
+};
+
+//users
+export type UserResponse = {
+  data: {
+    message: string;
+    users: User[];
+  };
+  meta: Meta;
+};
+
+export type UserParams = {
+  per_page: number;
+  page: number;
 };

@@ -4,11 +4,11 @@ import { twMerge } from "tailwind-merge";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-export const setLoggedInCookie = (bool: boolean) => {
+export const setLoggedInCookie = (role: string) => {
   const expires = new Date();
   expires.setFullYear(expires.getFullYear() + 1);
 
-  document.cookie = `logged-in=${bool}; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
+  document.cookie = `role=${role}; path=/; expires=${expires.toUTCString()}; SameSite=Lax`;
 };
 
 type ErrorsArray = {

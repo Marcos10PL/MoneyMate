@@ -24,5 +24,5 @@ export default function useDeleteTransaction() {
     open,
     setOpen,
     handleDelete,
-  };
+  } as const;
 }

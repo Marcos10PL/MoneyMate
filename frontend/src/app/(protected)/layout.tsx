@@ -1,7 +1,7 @@
 import Logo from "@/components/logo";
 import { ModeToggle } from "@/components/mode-toggle";
-import Logout from "@/components/protected/navbar/logout";
-import Nav from "@/components/protected/navbar/nav";
+import Logout from "@/components/protected/shared/navbar/logout";
+import Nav from "@/components/protected/shared/navbar/nav";
 
 export default function ProtectedLayout({
   children,

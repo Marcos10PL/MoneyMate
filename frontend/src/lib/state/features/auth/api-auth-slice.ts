@@ -16,7 +16,7 @@ export const authApi = createApi({
       transformResponse: (response: AuthResponse) => response.user,
       async onQueryStarted(_, { queryFulfilled }) {
         const { data: user } = await queryFulfilled;
-        setLoggedInCookie(true);
+        setLoggedInCookie(user.role);
         localStorage.setItem("user", JSON.stringify(user));
       },
     }),
@@ -29,7 +29,7 @@ export const authApi = createApi({
       transformResponse: (response: AuthResponse) => response.user,
       async onQueryStarted(_, { queryFulfilled }) {
         const { data: user } = await queryFulfilled;
-        setLoggedInCookie(true);
+        setLoggedInCookie(user.role);
         localStorage.setItem("user", JSON.stringify(user));
       },
     }),
@@ -40,7 +40,7 @@ export const authApi = createApi({
       }),
       async onQueryStarted(_, { queryFulfilled }) {
         await queryFulfilled;
-        setLoggedInCookie(false);
+        setLoggedInCookie("");
         localStorage.removeItem("user");
       },
     }),

@@ -13,7 +13,8 @@ class UserController extends Controller
    */
   public function index()
   {
-    return new UserCollection(User::all());
+    $perPage = request()->get('per_page', 10);
+    return new UserCollection(User::paginate($perPage));
   }
 
   /**

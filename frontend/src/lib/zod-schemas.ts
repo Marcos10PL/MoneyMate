@@ -54,7 +54,7 @@ export const searchTransactionFormSchema = z.object({
   search: z.string().optional(),
 });
 
-export const TransactionFormSchema = z.object({
+export const transactionFormSchema = z.object({
   name: z
     .string()
     .min(1, "Name is required")
@@ -69,4 +69,12 @@ export const TransactionFormSchema = z.object({
   date: z.date().optional(),
   category_id: z.string(),
   type_id: z.string(),
+});
+
+export const categoryFormSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .max(40, "Name must be less than 40 characters")
+    .regex(/^[a-zA-Z0-9.,\- ]*$/, "Invalid characters in name"),
 });

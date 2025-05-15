@@ -34,15 +34,10 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::apiResource('types', TypeController::class)->only([
     'index',
   ]);
+});
 
-  // only for admin
-  Route::apiResource('categories', CategoryController::class)->only([
-    'store',
-    'destroy'
-  ])->middleware('role');
-
-  Route::apiResource('users', UserController::class)->only([
-    'index',
-    'destroy'
-  ])->middleware('role');
+// only for admin
+Route::middleware(['auth:sanctum', 'role'])->group(function () {
+  Route::apiResource('categories', CategoryController::class)->only(['store', 'destroy']);
+  Route::apiResource('users', UserController::class)->only(['index', 'destroy']);
 });

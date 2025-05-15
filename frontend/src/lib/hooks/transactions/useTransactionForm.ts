@@ -5,7 +5,7 @@ import {
 } from "@/lib/state/features/transactions/api-transactions-slice";
 import { useGetTypesQuery } from "@/lib/state/features/types/api-types-slice";
 import { Transaction, TransactionForm } from "@/lib/types";
-import { TransactionFormSchema } from "@/lib/zod-schemas";
+import { transactionFormSchema } from "@/lib/zod-schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,25 +19,23 @@ export default function useTransactionForm({
   transaction,
 }: UseTransactionForm) {
   const form = useForm<TransactionForm>({
-    resolver: zodResolver(TransactionFormSchema),
+    resolver: zodResolver(transactionFormSchema),
     defaultValues: {
       name: transaction?.name || "",
       amount: transaction?.amount.toString() || "",
       category_id: undefined,
       type_id: undefined,
-      date: transaction?.date 
-        ? new Date(transaction.date)
-        : new Date(),
+      date: transaction?.date ? new Date(transaction.date) : new Date(),
     },
   });
 
-  const [createTransaction, { isLoading: isLoadingAddForm }] =
+  const [createTransaction, { isLoading: isCraeting }] =
     useCreateTransactionMutation();
-  const [updateTransaction, { isLoading: isLoadingUpdateForm }] =
+  const [updateTransaction, { isLoading: isUpdating }] =
     useUpdateTransactionMutation();
 
   const { data: categories, isSuccess: categoriesLoaded } =
-    useGetCategoriesQuery();
+    useGetCategoriesQuery({});
   const { data: types, isSuccess: typesLoaded } = useGetTypesQuery();
 
   const [open, setOpen] = useState(false);
@@ -78,7 +76,9 @@ export default function useTransactionForm({
 
   useEffect(() => {
     if (transaction && categoriesLoaded && typesLoaded) {
-      const category = categories.find(c => c.name === transaction.category);
+      const category = categories.data.categories.find(
+        c => c.name === transaction.category
+      );
       const type = types.find(t => t.name === transaction.type);
 
       if (category) {
@@ -95,7 +95,7 @@ export default function useTransactionForm({
     form,
     open,
     setOpen,
-    isLoading: transaction ? isLoadingUpdateForm : isLoadingAddForm,
+    isLoading: transaction ? isUpdating : isCraeting,
     onSubmit: transaction ? onSubmitUpdateForm : onSubmitAddForm,
-  };
+  } as const;
 }
