@@ -16,7 +16,7 @@ export default function Transactions() {
     isLoading,
     isError,
     isPageChanging,
-  } = useTransactions({ per_page: 8 });
+  } = useTransactions({ per_page: 7 });
 
   return (
     <>

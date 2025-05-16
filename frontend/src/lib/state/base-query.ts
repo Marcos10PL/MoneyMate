@@ -37,7 +37,7 @@ const baseQuery: BaseQueryFn<
 
     if (typeof window !== "undefined") {
       window.location.href = "/login";
-      setLoggedInCookie(false);
+      setLoggedInCookie("");
     }
   }
 
