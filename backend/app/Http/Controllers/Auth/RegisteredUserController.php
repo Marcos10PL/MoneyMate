@@ -63,4 +63,17 @@ class RegisteredUserController extends Controller
       ],
     ], Response::HTTP_CREATED);
   }
+
+  public function destroy(Request $request): JsonResponse
+  {
+    $user = $request->user();
+
+    if ($user) {
+      $user->tokens()->delete();
+      $user->delete();
+      return response()->json(['message' => 'User deleted successfully'], Response::HTTP_OK);
+    }
+
+    return response()->json(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
+  }
 }

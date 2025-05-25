@@ -44,6 +44,17 @@ export const authApi = createApi({
         localStorage.removeItem("user");
       },
     }),
+    deleteAccount: builder.mutation({
+      query: () => ({
+        url: "auth/delete",
+        method: "DELETE",
+      }),
+      async onQueryStarted(_, { queryFulfilled }) {
+        await queryFulfilled;
+        setLoggedInCookie("");
+        localStorage.removeItem("user");
+      },
+    }),
     getXSRF: builder.query<void, void>({
       query: () => `${process.env.NEXT_PUBLIC_API_URL}/sanctum/csrf-cookie`,
     }),
@@ -56,4 +67,5 @@ export const {
   useLogoutMutation,
   useGetXSRFQuery,
   useLazyGetXSRFQuery,
+  useDeleteAccountMutation,
 } = authApi;
