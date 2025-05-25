@@ -55,6 +55,7 @@ export default function Profile() {
             setOpen={setOpen}
             handleDelete={handleDeleteAccount}
             isLoading={isLoading}
+            id={user.id.toString()}
             textButton
           />
         </form>

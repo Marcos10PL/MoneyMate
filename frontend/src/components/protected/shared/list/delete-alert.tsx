@@ -15,9 +15,9 @@ import { TrashIcon } from "lucide-react";
 type AlertDeleteProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  handleDelete: (id?: string) => void;
+  handleDelete: (id: string) => void;
   isLoading: boolean;
-  id?: string;
+  id: string;
   textButton?: true;
 };
 
@@ -53,7 +53,7 @@ export default function DeleteAlert({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <Button
-            onClick={() => handleDelete(id ? id : undefined)}
+            onClick={() => handleDelete(id)}
             disabled={isLoading || !open}
             className="min-w-20"
           >
