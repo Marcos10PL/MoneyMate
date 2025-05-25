@@ -67,13 +67,13 @@ class RegisteredUserController extends Controller
   public function destroy(Request $request): JsonResponse
   {
     $user = $request->user();
+    $user->tokens()->delete();
 
-    if ($user) {
-      $user->tokens()->delete();
-      $user->delete();
-      return response()->json(['message' => 'User deleted successfully'], Response::HTTP_OK);
-    }
+    $user->delete();
 
-    return response()->json(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return response()->json(['message' => 'User deleted successfully'], Response::HTTP_OK);
   }
 }

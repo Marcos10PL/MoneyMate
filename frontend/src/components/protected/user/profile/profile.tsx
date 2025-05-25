@@ -2,22 +2,18 @@
 
 import useLocalStorage from "@/lib/hooks/useLocalStorage";
 import { User } from "@/lib/types";
-import {
-  MailIcon,
-  ShieldUserIcon,
-  TimerIcon,
-  UserIcon,
-} from "lucide-react";
+import { MailIcon, ShieldUserIcon, TimerIcon, UserIcon } from "lucide-react";
 import Header from "../../shared/header";
-import { Button } from "@/components/ui/button";
 import { useDeleteAccountMutation } from "@/lib/state/features/auth/api-auth-slice";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import Spinner from "@/components/spinner";
 import Input from "./input";
+import DeleteAlert from "../../shared/list/delete-alert";
+import { useState } from "react";
 
 export default function Profile() {
   const [user] = useLocalStorage<User | null>("user", null);
+  const [open, setOpen] = useState(false);
   const [deleteAccount, { isLoading }] = useDeleteAccountMutation();
   const router = useRouter();
 
@@ -54,14 +50,13 @@ export default function Profile() {
             Icon={TimerIcon}
           />
           <Input value={user.role} Icon={ShieldUserIcon} />
-          <Button
-            className="mt-2 max-w-sm w-full"
-            variant="destructive"
-            onClick={handleDeleteAccount}
-            disabled={isLoading}
-          >
-            {isLoading ? <Spinner /> : "Delete Account"}
-          </Button>
+          <DeleteAlert
+            open={open}
+            setOpen={setOpen}
+            handleDelete={handleDeleteAccount}
+            isLoading={isLoading}
+            textButton
+          />
         </form>
       </section>
     </>
