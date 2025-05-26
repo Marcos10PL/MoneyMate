@@ -16,85 +16,60 @@ class TransactionController extends Controller
    */
   public function index(Request $request)
   {
-    // $transactionsQuery = auth()->user()->transactions()->with(['category', 'type']);
+    $transactionsQuery = auth()->user()->transactions()->with(['category', 'type']);
 
-    // if ($request->has('category_id')) {
-    //   $transactionsQuery->where('category_id', $request->input('category_id'));
-    // }
-
-    // if ($request->has('start_date') && $request->has('end_date')) {
-    //   $startDate = Carbon::parse($request->input('start_date'))->timezone('Europe/Warsaw')->startOfDay();
-    //   $endDate = Carbon::parse($request->input('end_date'))->timezone('Europe/Warsaw')->endOfDay();
-
-    //   $transactionsQuery->whereBetween('date', [$startDate, $endDate]);
-    // } elseif ($request->has('start_date')) {
-    //   $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
-
-    //   $transactionsQuery->where('date', '>=', $startDate);
-    // } elseif ($request->has('end_date')) {
-    //   $endDate = Carbon::parse($request->input('end_date'))->timezone('Europe/Warsaw')->endOfDay();
-
-    //   $transactionsQuery->where('date', '<=', $endDate);
-    // }
-
-    // if ($request->has('sort_by') && in_array($request->input('sort_by'), ['asc', 'desc'])) {
-    //   $transactionsQuery->orderBy('amount', $request->input('sort_by'));
-    // } else if ($request->has('sort_by') && $request->input('sort_by') == 'asc') {
-    //   $transactionsQuery->orderBy('amount', 'asc');
-    // }
-
-    // if ($request->has('search') && $request->input('search') != '') {
-    //   $transactionsQuery->where('name', 'like', '%' . $request->input('search') . '%');
-    // }
-
-    // if ($request->has('type_id')) {
-    //   $transactionsQuery->where('type_id', $request->input('type_id'));
-    // }
-
-    // $income = (float) auth()->user()->transactions()
-    //   ->whereHas('type', fn($q) => $q
-    //     ->where('name', 'income'))
-    //   ->sum('amount');
-
-    // $expense = (float) auth()->user()->transactions()
-    //   ->whereHas('type', fn($q) => $q
-    //     ->where('name', 'expense'))
-    //   ->sum('amount');
-
-    // $transactions = $transactionsQuery->paginate($request->input('per_page', 10));
-    try {
-      $transactions = auth()->user()->transactions()
-        ->with(['category', 'type'])
-        ->paginate($request->input('per_page', 10));
-
-      return response()->json([
-        'data' => TransactionResource::collection($transactions),
-        'meta' => [
-          'current_page' => $transactions->currentPage(),
-          'last_page' => $transactions->lastPage(),
-          'per_page' => $transactions->perPage(),
-          'total' => $transactions->total(),
-        ],
-      ]);
-    } catch (\Exception $e) {
-        Log::error('Transaction error: '.$e->getMessage(), [
-            'trace' => $e->getTraceAsString(),
-            'request' => $request->all()
-        ]);
-        
-        return response()->json([
-            'message' => 'Error processing request',
-            'error' => env('APP_DEBUG') ? $e->getMessage() : null
-        ], 500);
+    if ($request->has('category_id')) {
+      $transactionsQuery->where('category_id', $request->input('category_id'));
     }
 
-    // return new TransactionCollection($transactions)->additional([
-    //   "data" => [
-    //     "income_sum" => round($income, 2),
-    //     "expense_sum" => round($expense, 2),
-    //     "balance" => round($income - $expense, 2),
-    //   ],
-    // ]);
+    if ($request->has('start_date') && $request->has('end_date')) {
+      $startDate = Carbon::parse($request->input('start_date'))->timezone('Europe/Warsaw')->startOfDay()->setTimezone('UTC');;
+      $endDate = Carbon::parse($request->input('end_date'))->timezone('Europe/Warsaw')->endOfDay()->setTimezone('UTC');;
+
+      $transactionsQuery->whereBetween('date', [$startDate, $endDate]);
+    } elseif ($request->has('start_date')) {
+      $startDate = Carbon::parse($request->input('start_date'))->startOfDay()->setTimezone('UTC');;
+
+      $transactionsQuery->where('date', '>=', $startDate);
+    } elseif ($request->has('end_date')) {
+      $endDate = Carbon::parse($request->input('end_date'))->timezone('Europe/Warsaw')->endOfDay()->setTimezone('UTC');;
+
+      $transactionsQuery->where('date', '<=', $endDate);
+    }
+
+    if ($request->has('sort_by') && in_array($request->input('sort_by'), ['asc', 'desc'])) {
+      $transactionsQuery->orderBy('amount', $request->input('sort_by'));
+    } else if ($request->has('sort_by') && $request->input('sort_by') == 'asc') {
+      $transactionsQuery->orderBy('amount', 'asc');
+    }
+
+    if ($request->has('search') && $request->input('search') != '') {
+      $transactionsQuery->where('name', 'like', '%' . $request->input('search') . '%');
+    }
+
+    if ($request->has('type_id')) {
+      $transactionsQuery->where('type_id', $request->input('type_id'));
+    }
+
+    $income = (float) auth()->user()->transactions()
+      ->whereHas('type', fn($q) => $q
+        ->where('name', 'income'))
+      ->sum('amount');
+
+    $expense = (float) auth()->user()->transactions()
+      ->whereHas('type', fn($q) => $q
+        ->where('name', 'expense'))
+      ->sum('amount');
+
+    $transactions = $transactionsQuery->paginate($request->input('per_page', 10));
+
+    return new TransactionCollection($transactions)->additional([
+      "data" => [
+        "income_sum" => round($income, 2),
+        "expense_sum" => round($expense, 2),
+        "balance" => round($income - $expense, 2),
+      ],
+    ]);
   }
 
   /**
