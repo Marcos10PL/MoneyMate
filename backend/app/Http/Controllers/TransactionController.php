@@ -16,8 +16,9 @@ class TransactionController extends Controller
    */
   public function index(Request $request)
   {
-    $transactionsQuery = auth()->user()->transactions()->with(['category', 'type']);
+    // $transactionsQuery = auth()->user()->transactions()->with(['category', 'type']);
 
+  
     // if ($request->has('category_id')) {
     //   $transactionsQuery->where('category_id', $request->input('category_id'));
     // }
@@ -63,13 +64,19 @@ class TransactionController extends Controller
 
     // $transactions = $transactionsQuery->paginate($request->input('per_page', 10));
 
-    return new TransactionCollection($transactionsQuery)->additional([
-      "data" => [
-        // "income_sum" => round($income, 2),
-        // "expense_sum" => round($expense, 2),
-        // "balance" => round($income - $expense, 2),
-      ],
-    ]);
+    // return new TransactionCollection($transactionsQuery)->additional([
+    //   "data" => [
+    //     // "income_sum" => round($income, 2),
+    //     // "expense_sum" => round($expense, 2),
+    //     // "balance" => round($income - $expense, 2),
+    //   ],
+    // ]);
+
+    $transactions = auth()->user()->transactions()
+      ->with(['category', 'type'])
+      ->get();
+    
+    return new TransactionCollection($transactions);
   }
 
   /**
