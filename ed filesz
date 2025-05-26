@@ -1,0 +1,33 @@
+[33mea7c41a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/railway-test[m[33m, [m[1;32mrailway-test[m[33m)[m test 11
+[33m86cc5c3[m test 10
+[33m825beb9[m test 9
+[33med9c4eb[m test 8
+[33mcef1d73[m test 7
+[33m89c6b2c[m test 6
+[33m84f08a9[m test 5
+[33m46a7a3c[m test 4
+[33ma92fb13[m test 3
+[33m88c4808[m test 2
+[33m0dfbfea[m test 1
+[33m8820e18[m update
+[33m2874604[m update
+[33m15b6bd1[m update
+[33mfdad03d[m update
+[33m8eb5cc4[m transactions endpoint
+[33m86d6859[m[33m ([m[1;31morigin/master[m[33m)[m remove unused files
+[33m24c4bd4[m fix bugs
+[33m4ba0bd8[m enhance account deletion process and improve UI components
+[33maec1e3e[m add account deletion functionality and update profile component
+[33m7d5e96e[m small update
+[33m9b7bf50[m add footer + technical fixes
+[33mc137407[m add admin panel - user and category management possible
+[33mb062b30[m add dashboard/home, profile page, transactions edit and add + fixes
+[33md12659d[m transactions - fetching and deleting
+[33m9d9ab60[m add pagination + some fixes
+[33me555bd5[m add API
+[33m089c692[m add the filtering and searching form + card for transaction
+[33md50b5fb[m Add responsive navigation and main page
+[33mc00dcfb[m Merge branch 'master' of https://github.com/Marcos10PL/MoneyMate
+[33m1dc5ac6[m login and register
+[33m90540fc[m Create README.md
+[33m6a8ee30[m initail commit
