@@ -23,16 +23,16 @@ class TransactionController extends Controller
     }
 
     if ($request->has('start_date') && $request->has('end_date')) {
-      $startDate = Carbon::parse($request->input('start_date'))->timezone('Europe/Warsaw')->startOfDay()->setTimezone('UTC');;
-      $endDate = Carbon::parse($request->input('end_date'))->timezone('Europe/Warsaw')->endOfDay()->setTimezone('UTC');;
+      $startDate = Carbon::parse($request->input('start_date'))->timezone('Europe/Warsaw')->startOfDay();
+      $endDate = Carbon::parse($request->input('end_date'))->timezone('Europe/Warsaw')->endOfDay();
 
       $transactionsQuery->whereBetween('date', [$startDate, $endDate]);
     } elseif ($request->has('start_date')) {
-      $startDate = Carbon::parse($request->input('start_date'))->startOfDay()->setTimezone('UTC');;
+      $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
 
       $transactionsQuery->where('date', '>=', $startDate);
     } elseif ($request->has('end_date')) {
-      $endDate = Carbon::parse($request->input('end_date'))->timezone('Europe/Warsaw')->endOfDay()->setTimezone('UTC');;
+      $endDate = Carbon::parse($request->input('end_date'))->timezone('Europe/Warsaw')->endOfDay();
 
       $transactionsQuery->where('date', '<=', $endDate);
     }
