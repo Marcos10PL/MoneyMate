@@ -64,15 +64,19 @@ class TransactionController extends Controller
 
     $transactions = $transactionsQuery->paginate($request->input('per_page', 10));
 
-    $collection = new TransactionCollection($transactions);
-
-    $collection->additionalData = [
-      "income_sum" => round($income, 2),
-      "expense_sum" => round($expense, 2),
-      "balance" => round($income - $expense, 2),
-    ];
-
-    return $collection;
+    return response()->json([
+        'data' => [
+          'transactions' => TransactionResource::collection($transactions),
+          'income_sum' => round($income, 2),
+          'expense_sum' => round($expense, 2),
+          'balance' => round($income - $expense, 2)
+        ],
+        'meta' => [
+          'current_page' => $transactions->currentPage(),
+          'per_page' => $transactions->perPage(),
+          'total' => $transactions->total()
+        ]
+    ]);
   }
 
   /**
