@@ -71,12 +71,12 @@ class TransactionController extends Controller
         //   ],
         // ]);
         
-    $transactionsQuery = auth()->user()->transactions()
+    $transactions = auth()->user()->transactions()
     ->with(['category', 'type'])
-    ->get();
+    ->paginate($request->input('per_page', 10));
     
-    $transactions = $transactionsQuery->paginate($request->input('per_page', 10));
-    
+    // $transactions = $transactionsQuery->paginate($request->input('per_page', 10));
+
     return new TransactionCollection($transactions);
   }
 
