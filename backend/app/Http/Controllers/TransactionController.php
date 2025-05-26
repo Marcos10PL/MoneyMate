@@ -62,43 +62,20 @@ class TransactionController extends Controller
     //   ->sum('amount');
 
     // $transactions = $transactionsQuery->paginate($request->input('per_page', 10));
-try {
-        // Test relacji
-        $relationTest = auth()->user()->transactions()
-            ->with(['category', 'type'])
-            ->limit(1)
-            ->get();
-            
-        if ($relationTest->isEmpty()) {
-            return response()->json([
-                'message' => 'No transactions found',
-                'data' => []
-            ]);
-        }
+    try {
+      $transactions = auth()->user()->transactions()
+        ->with(['category', 'type'])
+        ->paginate($request->input('per_page', 10));
 
-        // Główne zapytanie
-        $transactions = auth()->user()->transactions()
-            ->with(['category', 'type'])
-            ->filter($request->all())
-            ->paginate($request->input('per_page', 10));
-
-        // Obliczanie sum
-        $income = auth()->user()->transactions()
-            ->whereHas('type', fn($q) => $q->where('name', 'income'))
-            ->sum('amount');
-
-        $expense = auth()->user()->transactions()
-            ->whereHas('type', fn($q) => $q->where('name', 'expense'))
-            ->sum('amount');
-
-        return new TransactionCollection($transactions)->additional([
-            "data" => [
-                "income_sum" => round($income, 2),
-                "expense_sum" => round($expense, 2),
-                "balance" => round($income - $expense, 2),
-            ],
-        ]);
-
+      return response()->json([
+        'data' => TransactionResource::collection($transactions),
+        'meta' => [
+          'current_page' => $transactions->currentPage(),
+          'last_page' => $transactions->lastPage(),
+          'per_page' => $transactions->perPage(),
+          'total' => $transactions->total(),
+        ],
+      ]);
     } catch (\Exception $e) {
         Log::error('Transaction error: '.$e->getMessage(), [
             'trace' => $e->getTraceAsString(),
