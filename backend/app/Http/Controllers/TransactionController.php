@@ -74,6 +74,7 @@ class TransactionController extends Controller
         'meta' => [
           'current_page' => $transactions->currentPage(),
           'per_page' => $transactions->perPage(),
+          'last_page' => $transactions->lastPage(),
           'total' => $transactions->total()
         ]
     ]);

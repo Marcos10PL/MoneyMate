@@ -19,8 +19,6 @@ export default function Dashboard() {
     end_date: today.toISOString(),
   });
 
-  console.log(data);
-
   return (
     <>
       <DashboardHeader
