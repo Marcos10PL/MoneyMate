@@ -16,60 +16,69 @@ class TransactionController extends Controller
    */
   public function index(Request $request)
   {
-    $transactionsQuery = auth()->user()->transactions()->with(['category', 'type']);
+    // $transactionsQuery = auth()->user()->transactions()->with(['category', 'type']);
 
-    if ($request->has('category_id')) {
-      $transactionsQuery->where('category_id', $request->input('category_id'));
+    // if ($request->has('category_id')) {
+    //   $transactionsQuery->where('category_id', $request->input('category_id'));
+    // }
+
+    // if ($request->has('start_date') && $request->has('end_date')) {
+    //   $startDate = Carbon::parse($request->input('start_date'))->timezone('Europe/Warsaw')->startOfDay();
+    //   $endDate = Carbon::parse($request->input('end_date'))->timezone('Europe/Warsaw')->endOfDay();
+
+    //   $transactionsQuery->whereBetween('date', [$startDate, $endDate]);
+    // } elseif ($request->has('start_date')) {
+    //   $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
+
+    //   $transactionsQuery->where('date', '>=', $startDate);
+    // } elseif ($request->has('end_date')) {
+    //   $endDate = Carbon::parse($request->input('end_date'))->timezone('Europe/Warsaw')->endOfDay();
+
+    //   $transactionsQuery->where('date', '<=', $endDate);
+    // }
+
+    // if ($request->has('sort_by') && in_array($request->input('sort_by'), ['asc', 'desc'])) {
+    //   $transactionsQuery->orderBy('amount', $request->input('sort_by'));
+    // } else if ($request->has('sort_by') && $request->input('sort_by') == 'asc') {
+    //   $transactionsQuery->orderBy('amount', 'asc');
+    // }
+
+    // if ($request->has('search') && $request->input('search') != '') {
+    //   $transactionsQuery->where('name', 'like', '%' . $request->input('search') . '%');
+    // }
+
+    // if ($request->has('type_id')) {
+    //   $transactionsQuery->where('type_id', $request->input('type_id'));
+    // }
+
+    // $income = (float) auth()->user()->transactions()
+    //   ->whereHas('type', fn($q) => $q
+    //     ->where('name', 'income'))
+    //   ->sum('amount');
+
+    // $expense = (float) auth()->user()->transactions()
+    //   ->whereHas('type', fn($q) => $q
+    //     ->where('name', 'expense'))
+    //   ->sum('amount');
+
+    // $transactions = $transactionsQuery->paginate($request->input('per_page', 10));
+    try {
+      $transactions = auth()->user()->transactions()
+        ->with(['category', 'type'])
+        ->filter($request->all())
+        ->paginate($request->input('per_page', 10));
+    } catch (\Exception $e) {
+      Log::error('Error fetching transactions: ' . $e->getMessage());
+      return response()->json(['message' => 'Error fetching transactions'], 500);
     }
 
-    if ($request->has('start_date') && $request->has('end_date')) {
-      $startDate = Carbon::parse($request->input('start_date'))->timezone('Europe/Warsaw')->startOfDay();
-      $endDate = Carbon::parse($request->input('end_date'))->timezone('Europe/Warsaw')->endOfDay();
-
-      $transactionsQuery->whereBetween('date', [$startDate, $endDate]);
-    } elseif ($request->has('start_date')) {
-      $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
-
-      $transactionsQuery->where('date', '>=', $startDate);
-    } elseif ($request->has('end_date')) {
-      $endDate = Carbon::parse($request->input('end_date'))->timezone('Europe/Warsaw')->endOfDay();
-
-      $transactionsQuery->where('date', '<=', $endDate);
-    }
-
-    if ($request->has('sort_by') && in_array($request->input('sort_by'), ['asc', 'desc'])) {
-      $transactionsQuery->orderBy('amount', $request->input('sort_by'));
-    } else if ($request->has('sort_by') && $request->input('sort_by') == 'asc') {
-      $transactionsQuery->orderBy('amount', 'asc');
-    }
-
-    if ($request->has('search') && $request->input('search') != '') {
-      $transactionsQuery->where('name', 'like', '%' . $request->input('search') . '%');
-    }
-
-    if ($request->has('type_id')) {
-      $transactionsQuery->where('type_id', $request->input('type_id'));
-    }
-
-    $income = (float) auth()->user()->transactions()
-      ->whereHas('type', fn($q) => $q
-        ->where('name', 'income'))
-      ->sum('amount');
-
-    $expense = (float) auth()->user()->transactions()
-      ->whereHas('type', fn($q) => $q
-        ->where('name', 'expense'))
-      ->sum('amount');
-
-    $transactions = $transactionsQuery->paginate($request->input('per_page', 10));
-
-    return new TransactionCollection($transactions)->additional([
-      "data" => [
-        "income_sum" => round($income, 2),
-        "expense_sum" => round($expense, 2),
-        "balance" => round($income - $expense, 2),
-      ],
-    ]);
+    // return new TransactionCollection($transactions)->additional([
+    //   "data" => [
+    //     "income_sum" => round($income, 2),
+    //     "expense_sum" => round($expense, 2),
+    //     "balance" => round($income - $expense, 2),
+    //   ],
+    // ]);
   }
 
   /**
