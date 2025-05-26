@@ -62,19 +62,20 @@ class TransactionController extends Controller
     //     ->where('name', 'expense'))
     //   ->sum('amount');
 
-    // $transactions = $transactionsQuery->paginate($request->input('per_page', 10));
-
+    
     // return new TransactionCollection($transactionsQuery)->additional([
-    //   "data" => [
-    //     // "income_sum" => round($income, 2),
-    //     // "expense_sum" => round($expense, 2),
-    //     // "balance" => round($income - $expense, 2),
-    //   ],
-    // ]);
-
-    $transactions = auth()->user()->transactions()
-      ->with(['category', 'type'])
-      ->get();
+      //   "data" => [
+        //     // "income_sum" => round($income, 2),
+        //     // "expense_sum" => round($expense, 2),
+        //     // "balance" => round($income - $expense, 2),
+        //   ],
+        // ]);
+        
+    $transactionsQuery = auth()->user()->transactions()
+    ->with(['category', 'type'])
+    ->get();
+    
+    $transactions = $transactionsQuery->paginate($request->input('per_page', 10));
     
     return new TransactionCollection($transactions);
   }
