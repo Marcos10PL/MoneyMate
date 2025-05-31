@@ -1,6 +1,7 @@
 # MoneyMate
 
-MoneyMate is a fully responsive application with authorization (two roles: admin and user) for financial management. <br>
+MoneyMate is a fully responsive application with authorization - two roles: admin and user. <br>
+It was created for financial management. <br>
 It allows you to add income and expenses, as well as filter and search them. <br>
 
 ## tech
