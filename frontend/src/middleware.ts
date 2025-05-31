@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const publicRoutes = ["/login", "/sign-up", "/"];
+const basePath = "/money-mate";
+
+const publicRoutes = [
+  `${basePath}/login`,
+  `${basePath}/sign-up`,
+  `${basePath}/`,
+];
 
 type Role = "admin" | "user" | undefined;
 
 export default async function middleware(req: NextRequest) {
-  const path = req.nextUrl.pathname;
+  const path = basePath + req.nextUrl.pathname;
   const isPublicRoute = publicRoutes.includes(path);
-  const isAdminRoute = path.startsWith("/admin");
+  const isAdminRoute = path.startsWith(`${basePath}/admin`);
 
   let isLoggedIn = false;
   let isAdmin = false;
@@ -20,15 +26,15 @@ export default async function middleware(req: NextRequest) {
   }
 
   if (!isLoggedIn && !isPublicRoute) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL(`${basePath}/login`, req.url));
   }
 
   if (isAdminRoute && !isAdmin) {
-    return NextResponse.redirect(new URL("/404", req.url));
+    return NextResponse.redirect(new URL(`${basePath}/404`, req.url));
   }
 
   if (isLoggedIn && isPublicRoute) {
-    const redirectUrl = isAdmin ? "/admin" : "/dashboard";
+    const redirectUrl = isAdmin ? `${basePath}/admin` : `${basePath}/dashboard`;
     return NextResponse.redirect(new URL(redirectUrl, req.url));
   }
 

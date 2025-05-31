@@ -7,7 +7,7 @@ export default function Input({ value, Icon }: { value: string; Icon: LucideIcon
       <input
         type="text"
         disabled
-        className="border rounded-md px-4 py-2 bg-neutral-900 w-full pl-12"
+        className="border rounded-md px-4 py-2 dark:bg-neutral-900 w-full pl-12"
         value={value}
       />
     </div>

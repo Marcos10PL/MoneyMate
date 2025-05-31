@@ -36,7 +36,7 @@ const baseQuery: BaseQueryFn<
     api.dispatch({ type: "auth/logout" });
 
     if (typeof window !== "undefined") {
-      window.location.href = "/login";
+      window.location.href = "/money-mate/login";
       setLoggedInCookie("");
     }
   }
