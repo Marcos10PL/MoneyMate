@@ -16,6 +16,7 @@ RUN chmod -R 775 storage bootstrap/cache
 
 RUN php artisan config:cache && php artisan route:cache
 
-EXPOSE 8000
+EXPOSE 8080
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
+CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8080"]
+
