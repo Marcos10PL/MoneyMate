@@ -104,10 +104,10 @@ export function LoginForm({
             </div>
             <Error error={errors.email?.message || errors.password?.message} />
           </form>
-          If the login fails, please try again 2 - 3 times, as the site is hosted on
-          free hosting and may not be available yet.
         </CardContent>
       </Card>
+      If the login fails, please try again 2 - 3 times, as the site is hosted on
+      free hosting and may not be available yet.
     </div>
   );
 }
