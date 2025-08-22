@@ -6,7 +6,9 @@ It allows you to add income and expenses, as well as filter and search them. <br
 
 ## tech
 
--- Next.js + RTK Query <br />
+-- Next.js <br />
+-- TypeScript <br />
+-- RTK Query <br />
+-- Tailwind CSS <br />
+-- shadcn/ui (UI components) <br />
 -- Laravel (API) <br />
-
-It use shadcn/ui.
